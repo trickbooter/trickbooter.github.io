@@ -1,0 +1,4 @@
+baseurl = "https://example.org/"
+languageCode = "en-us"
+title = "Outback Coder (a working title)"
+theme = "hugo-theme-beg"
