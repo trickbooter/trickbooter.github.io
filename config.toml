@@ -2,6 +2,8 @@ baseurl = "https://trickbooter.github.io/"
 languageCode = "en-us"
 title = "Outback Coder (a working title)"
 theme = "hugo-theme-beg"
+PygmentsCodeFences = true
+pygmentsstyle = "friendly"
 
 [params]
 
