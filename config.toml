@@ -2,3 +2,17 @@ baseurl = "https://trickbooter.github.io/"
 languageCode = "en-us"
 title = "Outback Coder (a working title)"
 theme = "hugo-theme-beg"
+
+[params]
+
+[[params.social]]
+url = "https://github.com/trickbooter"
+fa_icon = "fa-github"
+
+[[params.social]]
+url = "https://au.linkedin.com/in/trickbooter"
+fa_icon = "fa-linkedin"
+
+[[params.social]]
+url = "/index.xml"
+fa_icon = "fa-rss"
