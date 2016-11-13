@@ -289,4 +289,82 @@ article.li.sm>header {
   color: #263238;
 }
 
-
+.level-item .title,
+.level-item .subtitle {
+    margin-bottom: 0
+}
+@media screen and (max-width: 768px) {
+    .level-item:not(:last-child) {
+        margin-bottom: 10px
+    }
+}
+.level-left .level-item:not(:last-child),
+.level-right .level-item:not(:last-child) {
+    margin-right: 10px
+}
+.level-left .level-item.is-flexible,
+.level-right .level-item.is-flexible {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1
+}
+.level.is-mobile>.level-item:not(:last-child) {
+    margin-bottom: 0
+}
+.level.is-mobile>.level-item:not(.is-narrow) {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1
+}
+@media screen and (min-width: 769px) {
+    .level {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex
+    }
+    .level>.level-item:not(.is-narrow) {
+        -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+        flex-grow: 1
+    }
+}
+.icon {
+    display: inline-block;
+    font-size: 21px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    vertical-align: middle;
+    width: 24px
+}
+.icon .fa {
+    font-size: inherit;
+    line-height: inherit
+}
+.icon.is-small {
+    display: inline-block;
+    font-size: 14px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    width: 16px
+}
+.icon.is-medium {
+    display: inline-block;
+    font-size: 28px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    vertical-align: middle;
+    width: 32px
+}
+.icon.is-large {
+    display: inline-block;
+    font-size: 42px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    vertical-align: middle;
+    width: 48px
+}
