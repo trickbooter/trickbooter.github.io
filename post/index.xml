@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Post-rsses on Outback Coder (a working title)</title>
-    <link>https://example.org/post/index.xml</link>
+    <link>https://trickbooter.github.io/post/index.xml</link>
     <description>Recent content in Post-rsses on Outback Coder (a working title)</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Nov 2016 15:40:31 +1100</lastBuildDate>
-    <atom:link href="https://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://trickbooter.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>A Spark Gradle Project</title>
-      <link>https://example.org/post/2016-11-12-spark-gradle/</link>
+      <link>https://trickbooter.github.io/post/2016-11-12-spark-gradle/</link>
       <pubDate>Sat, 12 Nov 2016 15:40:31 +1100</pubDate>
       
-      <guid>https://example.org/post/2016-11-12-spark-gradle/</guid>
+      <guid>https://trickbooter.github.io/post/2016-11-12-spark-gradle/</guid>
       <description>
 
 &lt;h2 id=&#34;an-empty-spark-project-with-gradle-goodies&#34;&gt;An Empty Spark Project with Gradle Goodies&lt;/h2&gt;
