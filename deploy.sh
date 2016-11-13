@@ -17,4 +17,4 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin develop
-git subtree push --prefix=public git@github.com:trickbooter/trickbooter.github.io.git master
+git subtree push --prefix=public origin master
