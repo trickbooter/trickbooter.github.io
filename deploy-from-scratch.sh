@@ -26,10 +26,10 @@ git checkout develop
 rm -rf public
 
 # Add the master branch of the repository. It will look like a folder named public
-git subtree add --prefix=public git@github.com:trickbooter/trickbooter.github.io.git develop --squash
+git subtree add --prefix=public git@github.com:trickbooter/trickbooter.github.io.git master --squash
 
 # Pull down the file we just committed. This helps avoid merge conflicts
-git subtree pull --prefix=public git@github.com:trickbooter/trickbooter.github.io.git develop
+git subtree pull --prefix=public git@github.com:trickbooter/trickbooter.github.io.git master
 
 # Run hugo. Generated site will be placed in public directory (or omit -t ThemeName if you're not using a theme)
 hugo
