@@ -51,27 +51,122 @@
 
 &lt;p&gt;&lt;em&gt;settings.gradle&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;Contains the project name (part of the jar name)&lt;/p&gt;
+&lt;p&gt;Contains the project name, which forms part of the jar name and artifact name.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;build.gradle&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;Where the main Gradle action happens. I have import various language support plugins, and &amp;lsquo;&lt;a href=&#34;https://github.com/johnrengelman/shadow&#34;&gt;shadow&lt;/a&gt;&amp;rsquo; to allow us to build the uber jar.&lt;/p&gt;
+&lt;p&gt;Where the main Gradle action happens.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/johnrengelman/shadow&#34;&gt;shadow&lt;/a&gt; plugin is used create an uber jar. It is the Gradle version of Maven&amp;rsquo;s &lt;a href=&#34;https://maven.apache.org/plugins/maven-shade-plugin/&#34;&gt;shade&lt;/a&gt; plugin.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;plugins {
+  id &#39;com.github.johnrengelman.shadow&#39; version &#39;1.2.3&#39;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I split out aspects of Gradle functions into their own scripts for neatness. To access them we import them in build.gradle&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apply from: &amp;quot;$rootDir/gradle/dependencies.gradle&amp;quot;
+apply from: &amp;quot;$rootDir/gradle/artifacts.gradle&amp;quot;
+apply from: &amp;quot;$rootDir/gradle/tests.gradle&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;em&gt;gradle/dependencies.gradle&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;A convenient location to maintain our dependencies. Using Gradle 2.14 also lets us take advantage of the compileOnly feature, which allows dependencies to be used during compile, but are then expected to be provided whilst the code is running. This is the perfect place to put our spark libraries.&lt;/p&gt;
+&lt;p&gt;A convenient location to maintain our dependencies. Keeping things in arrays makes the nice and easy to use.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;versions += [
+        scala     : &amp;quot;2.11&amp;quot;,
+        scalaPatch: &amp;quot;1&amp;quot;,
+        spark     : &amp;quot;2.0.1&amp;quot;
+]
+
+libs += [
+        commonsIO        : &amp;quot;commons-io:commons-io:2.4&amp;quot;,
+        commonsLang      : &amp;quot;org.apache.commons:commons-lang3:3.4&amp;quot;,
+        guava            : &amp;quot;com.google.guava:guava:18.0&amp;quot;
+        jodaTime         : &amp;quot;joda-time:joda-time:2.4&amp;quot;,
+        scala            : &amp;quot;org.scala-lang:scala-library:$versions.scala.$versions.scalaPatch&amp;quot;
+
+dependencies {
+    compile libs.commonsIO,
+            libs.commonsLang,
+            libs.guava,
+            libs.jodaTime,
+            libs.scala
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using Gradle 2.14 also lets us take advantage of the compileOnly feature, which allows dependencies to be used during compile, but are then expected to be provided whilst the code is running. This is the perfect place to put our spark libraries. Until recently Gradle didn&amp;rsquo;t have an equivalent of Maven&amp;rsquo;s providedCompile. For those of us building uber-jar&amp;rsquo;s, that meant we had to jump through hoops to exclude dependencies from the jar. The Spark dependencies are pretty huge, and entirely unnecessary for runtime since the Spark runtime provides them. Thankfully since &lt;a href=&#34;https://gradle.org/blog/compile-only-dependencies/&#34;&gt;Gradle 2.12&lt;/a&gt;, we can now use compileOnly. This makes the dependencies available during coding and buidling, but excludes them from the final artifact dependencies.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;compileOnly libs.spark,
+        libs.sparkSql,
+        libs.sparkStreaming
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;em&gt;gradle/tests.gradle&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Defines our test tasks. All I have done here is customised the default Gradle test task to ensure Gradle doesn&amp;rsquo;t swallow JUnit&amp;rsquo;s standard out and standard error.&lt;/p&gt;
 
+&lt;p&gt;I define maxParallelForks as 1 to prevent JUnit from running parallel tests. We need fine control over creation and destruction of Spark Sessions.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;test {
+    maxParallelForks = 1
+}
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;p&gt;&lt;em&gt;gradle/artifacts.gradle&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Defines our packaging tasks.&lt;/p&gt;
 
-&lt;h3 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next&lt;/h3&gt;
+&lt;p&gt;The shadowJar task is our uber-jaring task. The classifier sets the jar filename suffix. When I worked on a Spark Cassandra project I had to relocate com.google within the uber-jar to avoid a conflict with the &lt;a href=&#34;https://github.com/datastax/spark-cassandra-connector&#34;&gt;Spark Cassandra Connector&lt;/a&gt;. The issue is documented &lt;a href=&#34;http://stackoverflow.com/questions/34209329/guava-version-while-using-spark-shell&#34;&gt;here&lt;/a&gt;. I have left the code here for posterity, but isn&amp;rsquo;t necessary if you aren&amp;rsquo;t using the connector. I was also using various JDBC connectors, merging these into a single jar requires use to merge the manifest service files. For me it was sufficient to call mergeServiceFiles(), but you might need to manually relocated or write service files in your case.&lt;/p&gt;
 
-&lt;p&gt;I&amp;rsquo;ll extend the code in the coming weeks to include some test code.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;shadowJar {
+    classifier &amp;quot;shadow&amp;quot;
+    relocate &#39;com.google&#39;, &#39;shadow.com.google&#39;
+    mergeServiceFiles()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code I grabbed from this &lt;a href=&#34;https://gist.github.com/JonasGroeger/7620911&#34;&gt;gist&lt;/a&gt; with a few modifications. It grabs the commit hash code from the git repo (I assuming you are using git). We can use this to write into our jar manifest later.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;def getCheckedOutGitCommitHash() {
+    def gitFolder = &amp;quot;$projectDir/.git/&amp;quot;
+    /*
+     * &#39;.git/HEAD&#39; contains either
+     *      in case of detached head: the currently checked out commit hash
+     *      otherwise: a reference to a file containing the current commit hash
+     */
+    def head = new File(gitFolder + &amp;quot;HEAD&amp;quot;).text.split(&amp;quot;:&amp;quot;) // .git/HEAD
+    def isCommit = head.length == 1 // e5a7c79edabbf7dd39888442df081b1c9d8e88fd
+
+    if (isCommit) return head[0].trim()
+
+    def refHead = new File(gitFolder + head[1].trim()) // .git/refs/heads/master
+    refHead.text.trim()
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can now build the jar manifest and incorporate that git has code we jsut grabbed. This is awesome if you have to integrate or test on a shared platform and need to know exactly what jar is running.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;jar {
+    manifest {
+        attributes(
+                &amp;quot;Implementation-Title&amp;quot;: &amp;quot;Spark-Gradle&amp;quot;,
+                &amp;quot;Implementation-Descritpion&amp;quot;: &amp;quot;A Spark template project built using Gradle&amp;quot;,
+                &amp;quot;Implementation-Version&amp;quot;: getCheckedOutGitCommitHash(),
+                &amp;quot;Build-Timestamp&amp;quot;: (int) (new Date().getTime() / 1000)
+        )
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Lastly we have the tar task that grabs whatever files we want, in addition to the uber jar, and bundles them into a tar for easy distribution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;task distribution(type: Tar, dependsOn: shadowJar){
+    from shadowJar.outputs.files
+    from(&#39;src/conf&#39;) { into(&#39;conf&#39;) }
+}
+&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
