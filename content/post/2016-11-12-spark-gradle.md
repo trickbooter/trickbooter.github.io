@@ -22,7 +22,7 @@ Over the course of this project, I found myself wanting a handful of features fr
 
 ### Using the code
 
-Grab the code from [Github](https://github.com/trickbooter/spark-gradle). Although I have included the Gradle idea and eclipse plugins, I have only tested this on my usual Development tool of IntelliJ (idea). This
+Grab the code from [Github](https://github.com/trickbooter/spark-gradle). Although I have included the Gradle idea and eclipse plugins, I have only tested this on my usual Development tool of [IntelliJ](https://www.jetbrains.com/idea/).
 
 1. Open IntelliJ
 2. Select Import Project
