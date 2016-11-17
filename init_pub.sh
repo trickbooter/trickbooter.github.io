@@ -16,8 +16,8 @@ git commit -m "INIT: initial commit on master branch"
 # Push to remote master branch
 git push origin master
 
-# Return to master branch
-git checkout master
+# Return to develop branch
+git checkout develop
 
 # Remove the public folder to make room for the gh-pages subtree
 rm -rf public
