@@ -23,10 +23,10 @@ git checkout develop
 rm -rf public
 
 # Add the gh-pages branch of the repository. It will look like a folder named public
-git subtree add --prefix=public git@github.com:trickbooter/trickbooter.github.io.git develop --squash
+git subtree add --prefix=public git@github.com:trickbooter/trickbooter.github.io.git master --squash
 
 # Pull down the file we just committed. This helps avoid merge conflicts
-git -C ./public pull git@github.com:trickbooter/trickbooter.github.io.git master
+git -C ./public pull git@github.com:trickbooter/trickbooter.github.io.git master --allow-unrelated-histoies -m "Merge master subtree"
 
 # Run hugo. Generated site will be placed in public directory (or omit -t ThemeName if you're not using a theme)
 hugo
